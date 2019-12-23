@@ -37,25 +37,25 @@ func TestBytesConversion(t *testing.T) {
 	}
 }
 
-func TestIsHexAddress(t *testing.T) {
+func TestIsAddress(t *testing.T) {
 	tests := []struct {
 		str string
 		exp bool
 	}{
-		{"0x5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", true},
-		{"5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", true},
-		{"0X5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", true},
-		{"0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", true},
-		{"0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", true},
-		{"0x5aaeb6053f3e94c9b9a09f33669435e7ef1beaed1", false},
-		{"0x5aaeb6053f3e94c9b9a09f33669435e7ef1beae", false},
-		{"5aaeb6053f3e94c9b9a09f33669435e7ef1beaed11", false},
-		{"0xxaaeb6053f3e94c9b9a09f33669435e7ef1beaed", false},
+		{"ftm5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", true},
+		{"ftm5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", true},
+		{"ftm5aaeb6053f3e94c9b9a09f33669435e7ef1beaed", true},
+		{"ftmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", true},
+		{"ftmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", true},
+		{"ftm5aaeb6053f3e94c9b9a09f33669435e7ef1beaed1", false},
+		{"ftm5aaeb6053f3e94c9b9a09f33669435e7ef1beae", false},
+		{"ftm5aaeb6053f3e94c9b9a09f33669435e7ef1beaed11", false},
+		{"ftmxaaeb6053f3e94c9b9a09f33669435e7ef1beaed", false},
 	}
 
 	for _, test := range tests {
-		if result := IsHexAddress(test.str); result != test.exp {
-			t.Errorf("IsHexAddress(%s) == %v; expected %v",
+		if result := IsAddress(test.str); result != test.exp {
+			t.Errorf("IsAddress(%s) == %v; expected %v",
 				test.str, result, test.exp)
 		}
 	}
@@ -99,10 +99,10 @@ func TestAddressUnmarshalJSON(t *testing.T) {
 		{"", true, nil},
 		{`""`, true, nil},
 		{`"0x"`, true, nil},
-		{`"0x00"`, true, nil},
-		{`"0xG000000000000000000000000000000000000000"`, true, nil},
-		{`"0x0000000000000000000000000000000000000000"`, false, big.NewInt(0)},
-		{`"0x0000000000000000000000000000000000000010"`, false, big.NewInt(16)},
+		{`"fmt00"`, true, nil},
+		{`"fmtG000000000000000000000000000000000000000"`, true, nil},
+		{`"fmt0000000000000000000000000000000000000000"`, false, big.NewInt(0)},
+		{`"fmt0000000000000000000000000000000000000010"`, false, big.NewInt(16)},
 	}
 	for i, test := range tests {
 		var v Address

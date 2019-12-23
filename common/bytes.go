@@ -17,7 +17,10 @@
 // Package common contains various helper functions.
 package common
 
-import "encoding/hex"
+import (
+	"encoding/hex"
+	"strings"
+)
 
 // ToHex returns the hex representation of b, prefixed with '0x'.
 // For empty slices, the return value is "0x0".
@@ -63,9 +66,14 @@ func CopyBytes(b []byte) (copiedBytes []byte) {
 	return
 }
 
-// has0xPrefix validates str begins with '0x' or '0X'.
+// has0xPrefix validates str begins with 0x.
 func has0xPrefix(str string) bool {
 	return len(str) >= 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')
+}
+
+// hasAddrPrefix validates str begins with AddressPrefix.
+func hasAddrPrefix(str string) bool {
+	return strings.HasPrefix(str, AddressPrefix)
 }
 
 // isHexCharacter returns bool of c being a valid hexadecimal.

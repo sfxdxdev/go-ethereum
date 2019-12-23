@@ -37,11 +37,14 @@ const (
 	HashLength = 32
 	// AddressLength is the expected length of the address
 	AddressLength = 20
+	// AddressPrefix is for human-readable representation.
+	AddressPrefix = "ftm"
 )
 
 var (
-	hashT    = reflect.TypeOf(Hash{})
-	addressT = reflect.TypeOf(Address{})
+	hashT            = reflect.TypeOf(Hash{})
+	addressT         = reflect.TypeOf(Address{})
+	addressPrefixLen = len([]byte(AddressPrefix))
 )
 
 // Hash represents the 32 byte Keccak256 hash of arbitrary data.
@@ -189,13 +192,23 @@ func BigToAddress(b *big.Int) Address { return BytesToAddress(b.Bytes()) }
 
 // HexToAddress returns Address with byte values of s.
 // If s is larger than len(h), s will be cropped from the left.
-func HexToAddress(s string) Address { return BytesToAddress(FromHex(s)) }
+func HexToAddress(s string) Address {
+	return BytesToAddress(FromHex(s))
+}
 
-// IsHexAddress verifies whether a string can represent a valid hex-encoded
-// Ethereum address or not.
-func IsHexAddress(s string) bool {
-	if has0xPrefix(s) {
-		s = s[2:]
+// StrToAddress returns Address with byte values of s.
+// If s is larger than len(h), s will be cropped from the left.
+func StrToAddress(s string) Address {
+	if hasAddrPrefix(s) {
+		s = s[addressPrefixLen:]
+	}
+	return BytesToAddress(FromHex(s))
+}
+
+// IsAddress verifies whether a string can represent a valid address or not.
+func IsAddress(s string) bool {
+	if hasAddrPrefix(s) {
+		s = s[addressPrefixLen:]
 	}
 	return len(s) == 2*AddressLength && isHex(s)
 }
@@ -208,6 +221,10 @@ func (a Address) Hash() Hash { return BytesToHash(a[:]) }
 
 // Hex returns an EIP55-compliant hex string representation of the address.
 func (a Address) Hex() string {
+	return "0x" + a.unprefixedHex()
+}
+
+func (a Address) unprefixedHex() string {
 	unchecksummed := hex.EncodeToString(a[:])
 	sha := sha3.NewLegacyKeccak256()
 	sha.Write([]byte(unchecksummed))
@@ -225,12 +242,12 @@ func (a Address) Hex() string {
 			result[i] -= 32
 		}
 	}
-	return "0x" + string(result)
+	return string(result)
 }
 
 // String implements fmt.Stringer.
 func (a Address) String() string {
-	return a.Hex()
+	return AddressPrefix + a.unprefixedHex()
 }
 
 // Format implements fmt.Formatter, forcing the byte slice to be formatted as is,
@@ -250,17 +267,37 @@ func (a *Address) SetBytes(b []byte) {
 
 // MarshalText returns the hex representation of a.
 func (a Address) MarshalText() ([]byte, error) {
-	return hexutil.Bytes(a[:]).MarshalText()
+	return []byte(AddressPrefix + a.unprefixedHex()), nil
 }
 
 // UnmarshalText parses a hash in hex syntax.
 func (a *Address) UnmarshalText(input []byte) error {
-	return hexutil.UnmarshalFixedText("Address", input, a[:])
+	buf := make([]byte, addressPrefixLen+AddressLength)
+	err := hexutil.UnmarshalFixedText("Address", input, buf)
+	if err != nil {
+		return err
+	}
+	copy(a[:], buf[addressPrefixLen:])
+	return nil
+}
+
+// MarshalJSON returns the json string representation of a.
+func (a *Address) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + AddressPrefix + a.unprefixedHex() + `"`), nil
 }
 
 // UnmarshalJSON parses a hash in hex syntax.
 func (a *Address) UnmarshalJSON(input []byte) error {
-	return hexutil.UnmarshalFixedJSON(addressT, input, a[:])
+	var buf []byte
+	if len(input) > (addressPrefixLen + 1) {
+		buf = make([]byte, len(input)-1)
+		copy(buf[0:], input[:1])
+		copy(buf[1:], []byte("0x"))
+		copy(buf[3:], input[1+addressPrefixLen:])
+	} else {
+		buf = input
+	}
+	return hexutil.UnmarshalFixedJSON(addressT, buf, a[:])
 }
 
 // Scan implements Scanner for database/sql.
@@ -323,7 +360,7 @@ func NewMixedcaseAddress(addr Address) MixedcaseAddress {
 
 // NewMixedcaseAddressFromString is mainly meant for unit-testing
 func NewMixedcaseAddressFromString(hexaddr string) (*MixedcaseAddress, error) {
-	if !IsHexAddress(hexaddr) {
+	if !IsAddress(hexaddr) {
 		return nil, errors.New("invalid address")
 	}
 	a := FromHex(hexaddr)
