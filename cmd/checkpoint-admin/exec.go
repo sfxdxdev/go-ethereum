@@ -87,10 +87,10 @@ func deploy(ctx *cli.Context) error {
 	// Gather all the addresses that should be permitted to sign
 	var addrs []common.Address
 	for _, account := range strings.Split(ctx.String(signersFlag.Name), ",") {
-		if trimmed := strings.TrimSpace(account); !common.IsHexAddress(trimmed) {
+		if trimmed := strings.TrimSpace(account); !common.IsAddress(trimmed) {
 			utils.Fatalf("Invalid account in --signers: '%s'", trimmed)
 		}
-		addrs = append(addrs, common.HexToAddress(account))
+		addrs = append(addrs, common.StrToAddress(account))
 	}
 	// Retrieve and validate the signing threshold
 	needed := ctx.Int(thresholdFlag.Name)

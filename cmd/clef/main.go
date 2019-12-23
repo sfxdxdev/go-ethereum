@@ -331,10 +331,10 @@ func setCredential(ctx *cli.Context) error {
 		return err
 	}
 	addr := ctx.Args().First()
-	if !common.IsHexAddress(addr) {
+	if !common.IsAddress(addr) {
 		utils.Fatalf("Invalid address specified: %s", addr)
 	}
-	address := common.HexToAddress(addr)
+	address := common.StrToAddress(addr)
 	password := getPassPhrase("Please enter a password to store for this address:", true)
 	fmt.Println()
 
@@ -361,10 +361,10 @@ func removeCredential(ctx *cli.Context) error {
 		return err
 	}
 	addr := ctx.Args().First()
-	if !common.IsHexAddress(addr) {
+	if !common.IsAddress(addr) {
 		utils.Fatalf("Invalid address specified: %s", addr)
 	}
-	address := common.HexToAddress(addr)
+	address := common.StrToAddress(addr)
 
 	stretchedKey, err := readMasterKey(ctx, nil)
 	if err != nil {
