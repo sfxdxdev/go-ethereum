@@ -539,11 +539,11 @@ func (typedData *TypedData) EncodePrimitiveValue(encType string, encValue interf
 	switch encType {
 	case "address":
 		stringValue, ok := encValue.(string)
-		if !ok || !common.IsHexAddress(stringValue) {
+		if !ok || !common.IsAddress(stringValue) {
 			return nil, dataMismatchError(encType, encValue)
 		}
 		retval := make([]byte, 32)
-		copy(retval[12:], common.HexToAddress(stringValue).Bytes())
+		copy(retval[12:], common.StrToAddress(stringValue).Bytes())
 		return retval, nil
 	case "bool":
 		boolValue, ok := encValue.(bool)

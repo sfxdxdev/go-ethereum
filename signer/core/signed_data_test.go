@@ -133,17 +133,17 @@ var jsonTypedData = `
         "name": "Ether Mail",
         "version": "1",
         "chainId": "1",
-        "verifyingContract": "0xCCCcccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
+        "verifyingContract": "ftmCCCcccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
       },
       "message": {
         "from": {
           "name": "Cow",
 		  "test": 3,
-          "wallet": "0xcD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"
+          "wallet": "ftmcD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"
         },
         "to": {
           "name": "Bob",
-          "wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
+          "wallet": "ftmbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
         },
         "contents": "Hello, Bob!"
       }
@@ -156,18 +156,18 @@ var domainStandard = core.TypedDataDomain{
 	"Ether Mail",
 	"1",
 	math.NewHexOrDecimal256(1),
-	"0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+	"ftmCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
 	"",
 }
 
 var messageStandard = map[string]interface{}{
 	"from": map[string]interface{}{
 		"name":   "Cow",
-		"wallet": "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+		"wallet": "ftmCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
 	},
 	"to": map[string]interface{}{
 		"name":   "Bob",
-		"wallet": "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+		"wallet": "ftmbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
 	},
 	"contents": "Hello, Bob!",
 }

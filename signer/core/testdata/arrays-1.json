@@ -38,13 +38,13 @@
     "name": "Lorem",
     "version": "1",
     "chainId": "1",
-    "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
+    "verifyingContract": "ftmCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
   },
   "message": {
     "addys": [
-      "0x0000000000000000000000000000000000000001",
-      "0x0000000000000000000000000000000000000002",
-      "0x0000000000000000000000000000000000000003"
+      "ftm0000000000000000000000000000000000000001",
+      "ftm0000000000000000000000000000000000000002",
+      "ftm0000000000000000000000000000000000000003"
     ],
     "stringies": [
       "lorem",
